@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/sonner";
 import { mapDbError } from "@/lib/error-mapper";
@@ -25,6 +24,7 @@ const ScrapItems = () => {
   const [form, setForm] = useState({ item_id: "", quantity: 1, reason: "" });
   const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchScraps = async () => {
@@ -95,7 +95,14 @@ const ScrapItems = () => {
   };
 
   const handleDelete = async (scrap: any) => {
+    const confirmed = window.confirm(
+      `Delete scrap record for ${scrap.items?.name ?? "Unknown"} (${scrap.quantity} units)? This will not restore stock.`
+    );
+    if (!confirmed) return;
+
+    setDeletingId(scrap.id);
     const { error } = await supabase.from("scrap_items").delete().eq("id", scrap.id);
+    setDeletingId(null);
     if (error) { toast.error(mapDbError(error)); return; }
     toast.success("Scrap record deleted!");
     fetchScraps();
@@ -196,43 +203,13 @@ const ScrapItems = () => {
                   <TableHead>Reason</TableHead>
                   <TableHead>Photo</TableHead>
                   <TableHead>Date</TableHead>
-                  
+                  <TableHead>Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {scraps.map((s) => (
                   <TableRow key={s.id}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-                              title="Delete scrap record"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete scrap record?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This will permanently remove this scrap entry for "{s.items?.name ?? "Unknown"}" ({s.quantity} units). The item's stock will NOT be restored. This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDelete(s)} className="bg-destructive hover:bg-destructive/90">
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                        <span>{s.items?.name ?? "Unknown"}</span>
-                      </div>
-                    </TableCell>
+                    <TableCell className="font-medium">{s.items?.name ?? "Unknown"}</TableCell>
                     <TableCell>{s.quantity}</TableCell>
                     <TableCell>{s.reason ?? "—"}</TableCell>
                     <TableCell>
@@ -243,10 +220,22 @@ const ScrapItems = () => {
                       ) : <span className="text-muted-foreground">—</span>}
                     </TableCell>
                     <TableCell>{format(new Date(s.scrapped_at), "MMM d, yyyy")}</TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleDelete(s)}
+                        disabled={deletingId === s.id}
+                        className="gap-1 text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        {deletingId === s.id ? "Deleting..." : "Delete"}
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
                 {scraps.length === 0 && (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No scrapped items</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No scrapped items</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
