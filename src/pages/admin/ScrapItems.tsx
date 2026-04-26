@@ -202,9 +202,36 @@ const ScrapItems = () => {
               <TableBody>
                 {scraps.map((s) => (
                   <TableRow key={s.id}>
-                    <TableCell className="font-medium flex items-center gap-2">
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                      {s.items?.name ?? "Unknown"}
+                    <TableCell className="font-medium">
+                      <div className="flex items-center gap-2">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              title="Delete scrap record"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete scrap record?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently remove this scrap entry for "{s.items?.name ?? "Unknown"}" ({s.quantity} units). The item's stock will NOT be restored. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDelete(s)} className="bg-destructive hover:bg-destructive/90">
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        <span>{s.items?.name ?? "Unknown"}</span>
+                      </div>
                     </TableCell>
                     <TableCell>{s.quantity}</TableCell>
                     <TableCell>{s.reason ?? "—"}</TableCell>
@@ -216,29 +243,6 @@ const ScrapItems = () => {
                       ) : <span className="text-muted-foreground">—</span>}
                     </TableCell>
                     <TableCell>{format(new Date(s.scrapped_at), "MMM d, yyyy")}</TableCell>
-                    <TableCell className="text-right">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete scrap record?</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This will permanently remove this scrap entry for "{s.items?.name ?? "Unknown"}" ({s.quantity} units). The item's stock will NOT be restored. This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => handleDelete(s)} className="bg-destructive hover:bg-destructive/90">
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </TableCell>
                   </TableRow>
                 ))}
                 {scraps.length === 0 && (
