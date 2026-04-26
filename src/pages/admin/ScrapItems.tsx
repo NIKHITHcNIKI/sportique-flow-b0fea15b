@@ -196,7 +196,7 @@ const ScrapItems = () => {
                   <TableHead>Reason</TableHead>
                   <TableHead>Photo</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  
                 </TableRow>
               </TableHeader>
               <TableBody>
