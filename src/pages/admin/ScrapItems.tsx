@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/sonner";
 import { mapDbError } from "@/lib/error-mapper";
@@ -91,6 +92,13 @@ const ScrapItems = () => {
     clearPhoto();
     fetchScraps();
     fetchItems();
+  };
+
+  const handleDelete = async (scrap: any) => {
+    const { error } = await supabase.from("scrap_items").delete().eq("id", scrap.id);
+    if (error) { toast.error(mapDbError(error)); return; }
+    toast.success("Scrap record deleted!");
+    fetchScraps();
   };
 
   const downloadFile = () => {
@@ -188,6 +196,7 @@ const ScrapItems = () => {
                   <TableHead>Reason</TableHead>
                   <TableHead>Photo</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -207,10 +216,33 @@ const ScrapItems = () => {
                       ) : <span className="text-muted-foreground">—</span>}
                     </TableCell>
                     <TableCell>{format(new Date(s.scrapped_at), "MMM d, yyyy")}</TableCell>
+                    <TableCell className="text-right">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete scrap record?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently remove this scrap entry for "{s.items?.name ?? "Unknown"}" ({s.quantity} units). The item's stock will NOT be restored. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDelete(s)} className="bg-destructive hover:bg-destructive/90">
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
                   </TableRow>
                 ))}
                 {scraps.length === 0 && (
-                  <TableRow><TableCell colSpan={5} className="text-center py-8 text-muted-foreground">No scrapped items</TableCell></TableRow>
+                  <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">No scrapped items</TableCell></TableRow>
                 )}
               </TableBody>
             </Table>
