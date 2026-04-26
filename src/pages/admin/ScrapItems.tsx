@@ -94,7 +94,12 @@ const ScrapItems = () => {
     fetchItems();
   };
 
-  const downloadFile = () => {
+  const handleDelete = async (scrap: any) => {
+    const { error } = await supabase.from("scrap_items").delete().eq("id", scrap.id);
+    if (error) { toast.error(mapDbError(error)); return; }
+    toast.success("Scrap record deleted!");
+    fetchScraps();
+  };
     const data = scraps.map((s) => ({
       Item: s.items?.name ?? "Unknown",
       Quantity: s.quantity,
