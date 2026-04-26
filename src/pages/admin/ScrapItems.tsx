@@ -100,6 +100,8 @@ const ScrapItems = () => {
     toast.success("Scrap record deleted!");
     fetchScraps();
   };
+
+  const downloadFile = () => {
     const data = scraps.map((s) => ({
       Item: s.items?.name ?? "Unknown",
       Quantity: s.quantity,
