@@ -126,10 +126,10 @@ const AdminDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          <StatCard title="Total Items" value={stats.items} icon={Package} />
-          <StatCard title="Students" value={stats.students} icon={Users} color="bg-secondary" />
-          <StatCard title="Active Borrows" value={stats.borrows} icon={ArrowDownUp} color="bg-[hsl(var(--warning))]" />
-          <StatCard title="Scrapped Items" value={stats.scrapped} icon={Trash2} color="bg-destructive" />
+          <StatCard title="Total Items" value={stats.items} icon={Package} onClick={() => navigate("/admin/items")} />
+          <StatCard title="Students" value={stats.students} icon={Users} color="bg-secondary" onClick={() => navigate("/admin/students")} />
+          <StatCard title="Active Borrows" value={stats.borrows} icon={ArrowDownUp} color="bg-[hsl(var(--warning))]" onClick={() => navigate("/admin/borrows")} />
+          <StatCard title="Scrapped Items" value={stats.scrapped} icon={Trash2} color="bg-destructive" onClick={() => navigate("/admin/scrap")} />
         </div>
 
         <Card className="border-0 shadow-md">
