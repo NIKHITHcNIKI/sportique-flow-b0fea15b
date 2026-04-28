@@ -13,6 +13,7 @@ import { format } from "date-fns";
 import { generateCombinedPDFReport } from "@/lib/pdf-report";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({ items: 0, students: 0, borrows: 0, scrapped: 0 });
   const [recentBorrows, setRecentBorrows] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
