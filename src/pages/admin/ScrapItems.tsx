@@ -7,6 +7,16 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/components/ui/sonner";
 import { mapDbError } from "@/lib/error-mapper";
@@ -25,6 +35,7 @@ const ScrapItems = () => {
   const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [scrapToDelete, setScrapToDelete] = useState<any | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchScraps = async () => {
@@ -95,16 +106,12 @@ const ScrapItems = () => {
   };
 
   const handleDelete = async (scrap: any) => {
-    const confirmed = window.confirm(
-      `Delete scrap record for ${scrap.items?.name ?? "Unknown"} (${scrap.quantity} units)? This will not restore stock.`
-    );
-    if (!confirmed) return;
-
     setDeletingId(scrap.id);
     const { error } = await supabase.from("scrap_items").delete().eq("id", scrap.id);
     setDeletingId(null);
     if (error) { toast.error(mapDbError(error)); return; }
     toast.success("Scrap record deleted!");
+    setScrapToDelete(null);
     fetchScraps();
   };
 
@@ -223,10 +230,11 @@ const ScrapItems = () => {
                     <TableCell>
                       <Button
                         size="sm"
-                        variant="ghost"
-                        onClick={() => handleDelete(s)}
+                        variant="destructive"
+                        type="button"
+                        onClick={() => setScrapToDelete(s)}
                         disabled={deletingId === s.id}
-                        className="gap-1 text-destructive hover:text-destructive"
+                        className="gap-1"
                       >
                         <Trash2 className="h-4 w-4" />
                         {deletingId === s.id ? "Deleting..." : "Delete"}
@@ -241,6 +249,34 @@ const ScrapItems = () => {
             </Table>
           </CardContent>
         </Card>
+
+        <AlertDialog open={!!scrapToDelete} onOpenChange={(open) => !open && setScrapToDelete(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete scrap record?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {scrapToDelete
+                  ? `This will permanently delete the scrap entry for ${scrapToDelete.items?.name ?? "Unknown"} (${scrapToDelete.quantity} units). Stock will not be restored.`
+                  : "This action cannot be undone."}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={!!deletingId}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={(event) => {
+                  event.preventDefault();
+                  if (scrapToDelete) {
+                    void handleDelete(scrapToDelete);
+                  }
+                }}
+                disabled={!!deletingId}
+              >
+                {deletingId ? "Deleting..." : "Delete"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </DashboardLayout>
   );
