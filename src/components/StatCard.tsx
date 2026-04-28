@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface StatCardProps {
   title: string;
@@ -12,8 +12,22 @@ interface StatCardProps {
 }
 
 const StatCard = ({ title, value, icon: Icon, color = "bg-primary", to, onClick }: StatCardProps) => {
-  const card = (
-    <Card className={`border-0 shadow-md transition-all ${to || onClick ? "cursor-pointer hover:scale-[1.02] hover:shadow-lg" : ""}`}>
+  const navigate = useNavigate();
+  const clickable = !!(to || onClick);
+
+  const handleClick = () => {
+    if (onClick) onClick();
+    else if (to) navigate(to);
+  };
+
+  return (
+    <Card
+      onClick={clickable ? handleClick : undefined}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onKeyDown={clickable ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleClick(); } } : undefined}
+      className={`border-0 shadow-md transition-all ${clickable ? "cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.99]" : ""}`}
+    >
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
@@ -27,28 +41,6 @@ const StatCard = ({ title, value, icon: Icon, color = "bg-primary", to, onClick 
       </CardContent>
     </Card>
   );
-
-  if (to) {
-    return (
-      <Link to={to} className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
-        {card}
-      </Link>
-    );
-  }
-
-  if (onClick) {
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        className="block w-full rounded-lg text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-      >
-        {card}
-      </button>
-    );
-  }
-
-  return card;
 };
 
 export default StatCard;
