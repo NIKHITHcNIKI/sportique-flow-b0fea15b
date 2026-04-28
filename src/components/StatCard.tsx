@@ -6,10 +6,14 @@ interface StatCardProps {
   value: string | number;
   icon: LucideIcon;
   color?: string;
+  onClick?: () => void;
 }
 
-const StatCard = ({ title, value, icon: Icon, color = "bg-primary" }: StatCardProps) => (
-  <Card className="border-0 shadow-md hover:shadow-lg transition-shadow">
+const StatCard = ({ title, value, icon: Icon, color = "bg-primary", onClick }: StatCardProps) => (
+  <Card
+    onClick={onClick}
+    className={`border-0 shadow-md hover:shadow-lg transition-all ${onClick ? "cursor-pointer hover:scale-[1.02]" : ""}`}
+  >
     <CardContent className="p-6">
       <div className="flex items-center justify-between">
         <div>
