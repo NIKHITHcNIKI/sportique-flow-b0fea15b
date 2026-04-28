@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/DashboardLayout";
 import StatCard from "@/components/StatCard";
@@ -13,7 +12,6 @@ import { format } from "date-fns";
 import { generateCombinedPDFReport } from "@/lib/pdf-report";
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
   const [stats, setStats] = useState({ items: 0, students: 0, borrows: 0, scrapped: 0 });
   const [recentBorrows, setRecentBorrows] = useState<any[]>([]);
   const [generating, setGenerating] = useState(false);
@@ -126,10 +124,10 @@ const AdminDashboard = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          <StatCard title="Total Items" value={stats.items} icon={Package} onClick={() => navigate("/admin/items")} />
-          <StatCard title="Students" value={stats.students} icon={Users} color="bg-secondary" onClick={() => navigate("/admin/students")} />
-          <StatCard title="Active Borrows" value={stats.borrows} icon={ArrowDownUp} color="bg-[hsl(var(--warning))]" onClick={() => navigate("/admin/borrows")} />
-          <StatCard title="Scrapped Items" value={stats.scrapped} icon={Trash2} color="bg-destructive" onClick={() => navigate("/admin/scrap")} />
+          <StatCard title="Total Items" value={stats.items} icon={Package} to="/admin/items" />
+          <StatCard title="Students" value={stats.students} icon={Users} color="bg-secondary" to="/admin/students" />
+          <StatCard title="Active Borrows" value={stats.borrows} icon={ArrowDownUp} color="bg-[hsl(var(--warning))]" to="/admin/borrows" />
+          <StatCard title="Scrapped Items" value={stats.scrapped} icon={Trash2} color="bg-destructive" to="/admin/scrap" />
         </div>
 
         <Card className="border-0 shadow-md">
