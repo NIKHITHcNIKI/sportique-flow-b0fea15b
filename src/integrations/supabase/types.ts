@@ -224,6 +224,10 @@ export type Database = {
         Returns: boolean
       }
       scrap_item: { Args: { _item_id: string; _qty: number }; Returns: boolean }
+      verify_student_id_email: {
+        Args: { _email: string; _student_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "student"
