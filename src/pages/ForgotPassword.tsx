@@ -10,6 +10,7 @@ import { ArrowLeft } from "lucide-react";
 import collegeLogo from "@/assets/college-logo.png";
 
 type Step = "verify" | "otp" | "password";
+const MAX_RESEND_ATTEMPTS = 3;
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -21,6 +22,26 @@ const ForgotPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [resendAttempts, setResendAttempts] = useState(0);
+
+  const sendVerificationCode = async (targetEmail: string, isResend = false) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: targetEmail.trim(),
+      options: { shouldCreateUser: false },
+    });
+
+    if (error) {
+      toast.error(error.message);
+      return false;
+    }
+
+    toast.success(
+      isResend
+        ? "A new 6-digit code has been sent to your email."
+        : "A 6-digit code has been sent to your email."
+    );
+    return true;
+  };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,17 +59,12 @@ const ForgotPassword = () => {
       toast.error("Student ID and Email do not match our records.");
       return;
     }
-    // Send OTP via Supabase built-in email OTP
-    const { error: otpError } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: { shouldCreateUser: false },
-    });
+    const otpSent = await sendVerificationCode(email);
     setLoading(false);
-    if (otpError) {
-      toast.error(otpError.message);
+    if (!otpSent) {
       return;
     }
-    toast.success("A 6-digit code has been sent to your email.");
+    setResendAttempts(0);
     setStep("otp");
   };
 
@@ -71,6 +87,24 @@ const ForgotPassword = () => {
     }
     toast.success("Code verified! Set your new password.");
     setStep("password");
+  };
+
+  const handleResendCode = async () => {
+    if (resendAttempts >= MAX_RESEND_ATTEMPTS) {
+      toast.error("You have reached the resend limit.");
+      return;
+    }
+
+    setLoading(true);
+    const otpSent = await sendVerificationCode(email, true);
+    setLoading(false);
+
+    if (!otpSent) {
+      return;
+    }
+
+    setOtp("");
+    setResendAttempts((current) => current + 1);
   };
 
   const handlePasswordUpdate = async (e: React.FormEvent) => {
@@ -156,6 +190,22 @@ const ForgotPassword = () => {
               <Button type="submit" disabled={loading} className="w-full h-12 font-semibold">
                 {loading ? "Verifying..." : "Verify Code"}
               </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleResendCode}
+                disabled={loading || resendAttempts >= MAX_RESEND_ATTEMPTS}
+                className="w-full h-12 font-semibold"
+              >
+                {loading
+                  ? "Sending..."
+                  : resendAttempts >= MAX_RESEND_ATTEMPTS
+                    ? "Resend Limit Reached"
+                    : `Resend Code (${MAX_RESEND_ATTEMPTS - resendAttempts} left)`}
+              </Button>
+              <p className="text-center text-sm text-muted-foreground">
+                You can resend the code up to {MAX_RESEND_ATTEMPTS} times.
+              </p>
               <button
                 type="button"
                 onClick={() => setStep("verify")}
