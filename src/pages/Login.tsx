@@ -167,7 +167,7 @@ const Login = () => {
               <div className="text-right">
                 <button
                   type="button"
-                  onClick={() => setForgotOpen(true)}
+                  onClick={() => navigate("/forgot-password")}
                   className="text-sm text-primary font-medium hover:underline"
                 >
                   Forgot Password?
