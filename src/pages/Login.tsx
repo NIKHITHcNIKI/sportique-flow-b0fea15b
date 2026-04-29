@@ -19,11 +19,6 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Forgot password state
-  const [forgotOpen, setForgotOpen] = useState(false);
-  const [fpStudentId, setFpStudentId] = useState("");
-  const [fpEmail, setFpEmail] = useState("");
-  const [fpLoading, setFpLoading] = useState(false);
 
   const loginWithEmail = async (loginEmail: string) => {
     const { data: authData, error } = await supabase.auth.signInWithPassword({ email: loginEmail, password });
