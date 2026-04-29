@@ -187,37 +187,6 @@ const Login = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={forgotOpen} onOpenChange={setForgotOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Reset your password</DialogTitle>
-            <DialogDescription>
-              Enter your Student ID and registered Email. If they match, we'll send a password reset link to your email.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleForgotPassword} className="space-y-4 pt-2">
-            <Input
-              placeholder="Student ID (UUCMS ID)"
-              value={fpStudentId}
-              onChange={(e) => setFpStudentId(e.target.value)}
-              required
-              className="h-11"
-              maxLength={50}
-            />
-            <Input
-              type="email"
-              placeholder="Registered Email"
-              value={fpEmail}
-              onChange={(e) => setFpEmail(e.target.value)}
-              required
-              className="h-11"
-            />
-            <Button type="submit" disabled={fpLoading} className="w-full h-11 font-semibold">
-              {fpLoading ? "Sending..." : "Send Reset Link"}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
