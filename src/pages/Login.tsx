@@ -62,40 +62,6 @@ const Login = () => {
     await loginWithEmail(email);
   };
 
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!fpStudentId.trim() || !fpEmail.trim()) {
-      toast.error("Please enter both Student ID and Email");
-      return;
-    }
-    setFpLoading(true);
-    const { data: matches, error: verifyError } = await supabase.rpc("verify_student_id_email", {
-      _student_id: fpStudentId.trim(),
-      _email: fpEmail.trim(),
-    });
-    if (verifyError) {
-      setFpLoading(false);
-      toast.error("Could not verify your details. Please try again.");
-      return;
-    }
-    if (!matches) {
-      setFpLoading(false);
-      toast.error("Student ID and Email do not match our records.");
-      return;
-    }
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(fpEmail.trim(), {
-      redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}reset-password`,
-    });
-    setFpLoading(false);
-    if (resetError) {
-      toast.error(resetError.message);
-      return;
-    }
-    toast.success("Password reset link sent! Please check your email.");
-    setForgotOpen(false);
-    setFpStudentId("");
-    setFpEmail("");
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary p-4 relative overflow-hidden">
