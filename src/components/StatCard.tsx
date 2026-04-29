@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface StatCardProps {
   title: string;
@@ -12,11 +12,26 @@ interface StatCardProps {
 }
 
 const StatCard = ({ title, value, icon: Icon, color = "bg-primary", to, onClick }: StatCardProps) => {
+  const navigate = useNavigate();
   const clickable = !!(to || onClick);
 
-  const card = (
+  const handleClick = () => {
+    if (onClick) onClick();
+    if (to) navigate(to);
+  };
+
+  return (
     <Card
-      className={`border-0 shadow-md transition-all ${clickable ? "cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.99]" : ""}`}
+      onClick={clickable ? handleClick : undefined}
+      role={clickable ? "button" : undefined}
+      tabIndex={clickable ? 0 : undefined}
+      onKeyDown={clickable ? (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClick();
+        }
+      } : undefined}
+      className={`border-0 shadow-md transition-all ${clickable ? "cursor-pointer hover:scale-[1.02] hover:shadow-lg active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" : ""}`}
     >
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
@@ -30,30 +45,6 @@ const StatCard = ({ title, value, icon: Icon, color = "bg-primary", to, onClick 
         </div>
       </CardContent>
     </Card>
-  );
-
-  if (to) {
-    return (
-      <Link to={to} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg">
-        {card}
-      </Link>
-    );
-  }
-
-  return (
-    <div
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick();
-        }
-      } : undefined}
-    >
-      {card}
-    </div>
   );
 };
 
