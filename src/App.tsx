@@ -36,6 +36,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/install" element={<Install />} />
             <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/items" element={<ProtectedRoute requiredRole="admin"><ManageItems /></ProtectedRoute>} />
