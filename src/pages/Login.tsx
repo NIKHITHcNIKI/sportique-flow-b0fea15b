@@ -121,11 +121,12 @@ const Login = () => {
                 required
                 className="h-12 text-base"
               />
-              <div className="text-right">
+              <div className="flex items-center justify-end min-h-6">
                 <button
                   type="button"
                   onClick={() => navigate("/forgot-password")}
-                  className="text-sm text-primary font-medium hover:underline"
+                  className="inline-flex items-center text-sm text-primary font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  aria-label="Go to forgot password page"
                 >
                   Forgot Password?
                 </button>
