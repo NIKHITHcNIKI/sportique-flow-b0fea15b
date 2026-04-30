@@ -121,10 +121,6 @@ const Login = () => {
                 required
                 className="h-12 text-base"
               />
-              <Button type="submit" disabled={loading} className="w-full h-12 text-lg font-semibold gap-2">
-                <LogIn className="h-5 w-5" />
-                {loading ? "Signing in..." : "Sign In"}
-              </Button>
               <div className="text-right">
                 <button
                   type="button"
@@ -134,6 +130,10 @@ const Login = () => {
                   Forgot Password?
                 </button>
               </div>
+              <Button type="submit" disabled={loading} className="w-full h-12 text-lg font-semibold gap-2">
+                <LogIn className="h-5 w-5" />
+                {loading ? "Signing in..." : "Sign In"}
+              </Button>
             </form>
           )}
 
