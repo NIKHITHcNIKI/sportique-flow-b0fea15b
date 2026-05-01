@@ -2,12 +2,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard, Package, History, Trash2, LogOut, User, Users, ShoppingCart, RotateCcw, QrCode
+  LayoutDashboard, Package, History, Trash2, LogOut, User, Users, ShoppingCart, QrCode
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import collegeLogo from "@/assets/college-logo.png";
 
-const AppSidebar = () => {
+const AppSidebar = ({ onNavigate }: { onNavigate?: () => void }) => {
   const { role, signOut, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,14 +29,18 @@ const AppSidebar = () => {
 
   const links = role === "admin" ? adminLinks : studentLinks;
 
+  const go = (path: string) => {
+    navigate(path);
+    onNavigate?.();
+  };
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/login");
   };
 
   return (
-    <div className="w-64 min-h-screen bg-sidebar text-sidebar-foreground flex flex-col">
-      {/* Header */}
+    <div className="w-64 h-full min-h-screen bg-sidebar text-sidebar-foreground flex flex-col">
       <div className="p-6 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full overflow-hidden">
@@ -53,14 +57,13 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {links.map((link) => {
           const isActive = location.pathname === link.path;
           return (
             <button
               key={link.path}
-              onClick={() => navigate(link.path)}
+              onClick={() => go(link.path)}
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all",
                 isActive
@@ -75,7 +78,6 @@ const AppSidebar = () => {
         })}
       </nav>
 
-      {/* User info & logout */}
       <div className="p-4 border-t border-sidebar-border space-y-3">
         <div className="flex items-center gap-3 px-3">
           <div className="w-8 h-8 bg-sidebar-accent rounded-full flex items-center justify-center">
