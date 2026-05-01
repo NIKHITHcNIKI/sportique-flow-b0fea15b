@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 import { toast } from "@/components/ui/sonner";
-import { LogIn } from "lucide-react";
+import { KeyRound, LogIn } from "lucide-react";
 import collegeLogo from "@/assets/college-logo.png";
 
 const Login = () => {
@@ -121,13 +121,14 @@ const Login = () => {
                 required
                 className="h-12 text-base"
               />
-              <div className="flex items-center justify-end min-h-6">
+              <div className="flex items-center justify-end pt-1">
                 <button
                   type="button"
                   onClick={() => navigate("/forgot-password")}
-                  className="inline-flex items-center text-sm text-primary font-semibold underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="inline-flex items-center gap-2 rounded-md px-1 py-1 text-sm font-bold text-primary underline underline-offset-4 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   aria-label="Go to forgot password page"
                 >
+                  <KeyRound className="h-4 w-4" />
                   Forgot Password?
                 </button>
               </div>
