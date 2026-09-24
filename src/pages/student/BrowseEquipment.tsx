@@ -145,7 +145,7 @@ const BrowseEquipment = () => {
     }
 
     // Upload photo
-    const fileName = `borrow_${user.id}_${Date.now()}.jpg`;
+    const fileName = `${user.id}/borrow_${Date.now()}.jpg`;
     const { error: uploadError } = await supabase.storage
       .from("borrow-photos")
       .upload(fileName, photoBlob, { contentType: "image/jpeg" });

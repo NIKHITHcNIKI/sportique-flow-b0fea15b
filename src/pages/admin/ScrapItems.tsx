@@ -51,7 +51,7 @@ const ScrapItems = () => {
   useEffect(() => { fetchScraps(); fetchItems(); }, []);
 
   const uploadPhoto = async (blob: Blob): Promise<string | null> => {
-    const fileName = `scrap_${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+    const fileName = `${user?.id}/scrap_${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
     const { error } = await supabase.storage.from("borrow-photos").upload(fileName, blob, { contentType: "image/jpeg" });
     if (error) return null;
     const { data: urlData } = supabase.storage.from("borrow-photos").getPublicUrl(fileName);

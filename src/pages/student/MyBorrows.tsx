@@ -57,7 +57,7 @@ const MyBorrows = () => {
     setSubmitting(true);
 
     // Upload return photo
-    const fileName = `return_${user.id}_${Date.now()}.jpg`;
+    const fileName = `${user.id}/return_${Date.now()}.jpg`;
     const { error: uploadError } = await supabase.storage
       .from("borrow-photos")
       .upload(fileName, returnPhotoBlob, { contentType: "image/jpeg" });
